@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FoodieGo – Interactive Prototype</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0f0f1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    color: #fff;
+    padding: 20px;
+  }
+
+  h1.title {
+    font-size: 13px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #888;
+    margin-bottom: 10px;
+  }
+
+  .prototype-label {
+    font-size: 11px;
+    color: #555;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+  }
+
+  /* Phone Shell */
+  .phone {
+    width: 360px;
+    height: 720px;
+    background: #1a1a2e;
+    border-radius: 40px;
+    border: 3px solid #2a2a4a;
+    box-shadow: 0 0 60px rgba(99,102,241,0.3), 0 30px 80px rgba(0,0,0,0.6);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 6px;
+    background: #2a2a4a;
+    border-radius: 3px;
+    z-index: 100;
+  }
+
+  /* Screens */
+  .screen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
+  }
+
+  .screen.active {
+    transform: translateX(0%);
+  }
+
+  .screen.exit-left {
+    transform: translateX(-100%);
+  }
+
+  /* ── SCREEN 1: SPLASH ── */
+  #splash {
+    background: linear-gradient(160deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .splash-icon {
+    width: 90px;
+    height: 90px;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    border-radius: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 42px;
+    box-shadow: 0 16px 40px rgba(249,115,22,0.4);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 16px 40px rgba(249,115,22,0.4); }
+    50% { box-shadow: 0 16px 60px rgba(249,115,22,0.7); }
+  }
+
+  .splash-title {
+    font-size: 32px;
+    font-weight: 800;
+    background: linear-gradient(90deg, #f97316, #ef4444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+  }
+
+  .splash-sub {
+    font-size: 14px;
+    color: #888;
+    letter-spacing: 1px;
+  }
+
+  .btn-primary {
+    margin-top: 20px;
+    padding: 16px 48px;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    border: none;
+    border-radius: 50px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: transform 0.15s, box-shadow 0.15s;
+    box-shadow: 0 8px 24px rgba(249,115,22,0.4);
+  }
+
+  .btn-primary:hover { transform: scale(1.04); }
+  .btn-primary:active { transform: scale(0.97); }
+
+  /* ── SCREEN 2: LOGIN ── */
+  #login {
+    background: #12121f;
+  }
+
+  .login-header {
+    padding: 60px 28px 30px;
+    background: linear-gradient(180deg, #1a1a2e, transparent);
+  }
+
+  .login-header h2 { font-size: 26px; font-weight: 800; }
+  .login-header p { font-size: 13px; color: #888; margin-top: 4px; }
+
+  .login-body {
+    flex: 1;
+    padding: 0 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .input-group label {
+    font-size: 12px;
+    color: #888;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .input-group input {
+    width: 100%;
+    padding: 14px 16px;
+    background: #1e1e32;
+    border: 1.5px solid #2a2a4a;
+    border-radius: 14px;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input-group input:focus { border-color: #f97316; }
+  .input-group input::placeholder { color: #444; }
+
+  .forgot {
+    text-align: right;
+    font-size: 12px;
+    color: #f97316;
+    cursor: pointer;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #444;
+    font-size: 12px;
+    margin: 4px 0;
+  }
+
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #2a2a4a;
+  }
+
+  .social-row {
+    display: flex;
+    gap: 12px;
+  }
+
+  .social-btn {
+    flex: 1;
+    padding: 12px;
+    background: #1e1e32;
+    border: 1.5px solid #2a2a4a;
+    border-radius: 14px;
+    color: #ccc;
+    font-size: 13px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    text-align: center;
+  }
+
+  .social-btn:hover { border-color: #f97316; background: #251e32; }
+
+  .signup-link {
+    text-align: center;
+    font-size: 13px;
+    color: #888;
+    padding: 20px 0 30px;
+  }
+
+  .signup-link span { color: #f97316; cursor: pointer; }
+
+  /* ── SCREEN 3: HOME ── */
+  #home {
+    background: #0d0d1a;
+  }
+
+  .home-header {
+    padding: 50px 20px 16px;
+    background: linear-gradient(180deg, #1a1a2e, transparent);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .home-header .greeting { font-size: 13px; color: #888; }
+  .home-header .name { font-size: 20px; font-weight: 700; margin-top: 2px; }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .search-bar {
+    margin: 0 20px 16px;
+    padding: 12px 16px;
+    background: #1e1e32;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #555;
+    font-size: 14px;
+    border: 1.5px solid #2a2a4a;
+    cursor: pointer;
+  }
+
+  .category-scroll {
+    display: flex;
+    gap: 10px;
+    padding: 0 20px 16px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .category-scroll::-webkit-scrollbar { display: none; }
+
+  .cat-pill {
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 13px;
+    white-space: nowrap;
+    cursor: pointer;
+    border: 1.5px solid #2a2a4a;
+    background: transparent;
+    color: #888;
+    transition: all 0.2s;
+  }
+
+  .cat-pill.active {
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    border-color: transparent;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .section-label {
+    padding: 0 20px 12px;
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .food-scroll {
+    display: flex;
+    gap: 14px;
+    padding: 0 20px 20px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .food-scroll::-webkit-scrollbar { display: none; }
+
+  .food-card {
+    min-width: 160px;
+    background: #1a1a2e;
+    border-radius: 20px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s;
+    border: 1px solid #2a2a4a;
+  }
+
+  .food-card:hover { transform: translateY(-4px); }
+
+  .food-card .img {
+    height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+  }
+
+  .food-card .info { padding: 10px 12px 14px; }
+  .food-card .info .fname { font-size: 14px; font-weight: 700; }
+  .food-card .info .fmeta { font-size: 11px; color: #888; margin-top: 2px; }
+  .food-card .info .fprice { font-size: 15px; font-weight: 700; color: #f97316; margin-top: 6px; }
+
+  .restaurants-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px;
+    scrollbar-width: none;
+  }
+
+  .rest-card {
+    background: #1a1a2e;
+    border-radius: 18px;
+    padding: 14px;
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin-bottom: 12px;
+    cursor: pointer;
+    border: 1px solid #2a2a4a;
+    transition: border-color 0.2s;
+  }
+
+  .rest-card:hover { border-color: #f97316; }
+
+  .rest-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+
+  .rest-info .rname { font-size: 15px; font-weight: 700; }
+  .rest-info .rmeta { font-size: 12px; color: #888; margin-top: 3px; }
+  .rest-info .rtags { font-size: 11px; color: #f97316; margin-top: 4px; }
+
+  .bottom-nav {
+    display: flex;
+    padding: 12px 0 20px;
+    border-top: 1px solid #2a2a4a;
+    background: #0d0d1a;
+  }
+
+  .nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-size: 20px;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+  }
+
+  .nav-item span { font-size: 10px; letter-spacing: 0.5px; }
+  .nav-item.active { opacity: 1; color: #f97316; }
+
+  /* ── SCREEN 4: DETAIL ── */
+  #detail {
+    background: #0d0d1a;
+  }
+
+  .detail-img {
+    height: 240px;
+    background: linear-gradient(160deg, #1a1a2e, #0f3460);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 100px;
+    position: relative;
+  }
+
+  .back-btn {
+    position: absolute;
+    top: 50px;
+    left: 16px;
+    width: 38px;
+    height: 38px;
+    background: rgba(0,0,0,0.5);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(8px);
+  }
+
+  .fav-btn {
+    position: absolute;
+    top: 50px;
+    right: 16px;
+    width: 38px;
+    height: 38px;
+    background: rgba(0,0,0,0.5);
+    border: none;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+  }
+
+  .detail-body {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: none;
+    padding: 20px;
+  }
+
+  .detail-body::-webkit-scrollbar { display: none; }
+
+  .detail-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+  }
+
+  .detail-top h2 { font-size: 24px; font-weight: 800; }
+  .detail-price { font-size: 22px; font-weight: 800; color: #f97316; }
+
+  .detail-meta {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .meta-chip {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12px;
+    color: #888;
+    background: #1e1e32;
+    padding: 6px 12px;
+    border-radius: 50px;
+  }
+
+  .detail-desc {
+    font-size: 14px;
+    color: #888;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .qty-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+
+  .qty-row label { font-size: 15px; font-weight: 600; }
+
+  .qty-ctrl {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .qty-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1.5px solid #2a2a4a;
+    background: #1e1e32;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .qty-num { font-size: 18px; font-weight: 700; }
+
+  .add-cart-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    border: none;
+    border-radius: 16px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s;
+    box-shadow: 0 8px 24px rgba(249,115,22,0.4);
+  }
+
+  .add-cart-btn:active { transform: scale(0.97); }
+
+  /* ── SCREEN 5: ORDER CONFIRMED ── */
+  #confirm {
+    background: #0d0d1a;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    text-align: center;
+    padding: 40px;
+  }
+
+  .confirm-icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    box-shadow: 0 16px 40px rgba(34,197,94,0.4);
+    animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  #confirm h2 { font-size: 24px; font-weight: 800; }
+  #confirm p { font-size: 14px; color: #888; line-height: 1.6; }
+
+  .track-card {
+    background: #1a1a2e;
+    border-radius: 20px;
+    padding: 20px;
+    width: 100%;
+    border: 1px solid #2a2a4a;
+    text-align: left;
+  }
+
+  .track-step {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    position: relative;
+  }
+
+  .track-dot {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .track-dot.done { background: #22c55e; }
+  .track-dot.pending { background: #2a2a4a; color: #666; }
+
+  .track-info .tname { font-size: 13px; font-weight: 600; }
+  .track-info .ttime { font-size: 11px; color: #888; }
+
+  /* Navigation indicator dots */
+  .nav-dots {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2a2a4a;
+    transition: all 0.3s;
+  }
+
+  .dot.active {
+    background: #f97316;
+    width: 24px;
+    border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<h1 class="title">FoodieGo App</h1>
+<p class="prototype-label">Interactive Prototype · 5 Screens</p>
+
+<div class="phone">
+
+  <!-- SCREEN 1: SPLASH -->
+  <div class="screen active" id="splash">
+    <div class="splash-icon">🍔</div>
+    <div class="splash-title">FoodieGo</div>
+    <div class="splash-sub">Delicious food, delivered fast</div>
+    <button class="btn-primary" onclick="goTo('login')">Get Started →</button>
+  </div>
+
+  <!-- SCREEN 2: LOGIN -->
+  <div class="screen" id="login">
+    <div class="login-header">
+      <h2>Welcome back 👋</h2>
+      <p>Sign in to continue ordering</p>
+    </div>
+    <div class="login-body">
+      <div class="input-group">
+        <label>Email</label>
+        <input type="email" placeholder="you@example.com" value="john@example.com">
+      </div>
+      <div class="input-group">
+        <label>Password</label>
+        <input type="password" placeholder="••••••••" value="password123">
+      </div>
+      <div class="forgot">Forgot password?</div>
+      <button class="btn-primary" onclick="goTo('home')" style="margin-top:8px">Login</button>
+      <div class="divider">or continue with</div>
+      <div class="social-row">
+        <div class="social-btn" onclick="goTo('home')">🌐 Google</div>
+        <div class="social-btn" onclick="goTo('home')">📘 Facebook</div>
+      </div>
+    </div>
+    <div class="signup-link">Don't have an account? <span onclick="goTo('home')">Sign up</span></div>
+  </div>
+
+  <!-- SCREEN 3: HOME -->
+  <div class="screen" id="home">
+    <div class="home-header">
+      <div>
+        <div class="greeting">Good evening,</div>
+        <div class="name">John Doe 👋</div>
+      </div>
+      <div class="avatar">👤</div>
+    </div>
+
+    <div class="search-bar">🔍 Search for food or restaurants...</div>
+
+    <div class="category-scroll">
+      <div class="cat-pill active">🍔 Burgers</div>
+      <div class="cat-pill">🍕 Pizza</div>
+      <div class="cat-pill">🍜 Noodles</div>
+      <div class="cat-pill">🥗 Salads</div>
+      <div class="cat-pill">🍰 Desserts</div>
+    </div>
+
+    <div class="section-label">⚡ Popular Near You</div>
+    <div class="food-scroll">
+      <div class="food-card" onclick="goTo('detail')">
+        <div class="img" style="background:linear-gradient(135deg,#1e1e32,#2a1a3a)">🍔</div>
+        <div class="info">
+          <div class="fname">Classic Burger</div>
+          <div class="fmeta">⭐ 4.8 · 20 min</div>
+          <div class="fprice">₹199</div>
+        </div>
+      </div>
+      <div class="food-card" onclick="goTo('detail')">
+        <div class="img" style="background:linear-gradient(135deg,#1e2a1e,#1a3a1a)">🍕</div>
+        <div class="info">
+          <div class="fname">Pepperoni Pizza</div>
+          <div class="fmeta">⭐ 4.6 · 30 min</div>
+          <div class="fprice">₹349</div>
+        </div>
+      </div>
+      <div class="food-card" onclick="goTo('detail')">
+        <div class="img" style="background:linear-gradient(135deg,#2a1e1e,#3a1a1a)">🍜</div>
+        <div class="info">
+          <div class="fname">Ramen Bowl</div>
+          <div class="fmeta">⭐ 4.9 · 25 min</div>
+          <div class="fprice">₹279</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">🏪 Top Restaurants</div>
+    <div class="restaurants-list">
+      <div class="rest-card" onclick="goTo('detail')">
+        <div class="rest-icon" style="background:#1e2a1a">🍔</div>
+        <div class="rest-info">
+          <div class="rname">Burger Palace</div>
+          <div class="rmeta">⭐ 4.8 · 20–30 min · Free delivery</div>
+          <div class="rtags">Burgers · Fast Food · American</div>
+        </div>
+      </div>
+      <div class="rest-card" onclick="goTo('detail')">
+        <div class="rest-icon" style="background:#2a1a1e">🍕</div>
+        <div class="rest-info">
+          <div class="rname">Pizza Heaven</div>
+          <div class="rmeta">⭐ 4.6 · 25–35 min · ₹30 delivery</div>
+          <div class="rtags">Pizza · Italian · Pasta</div>
+        </div>
+      </div>
+      <div class="rest-card" onclick="goTo('detail')">
+        <div class="rest-icon" style="background:#1a1e2a">🍜</div>
+        <div class="rest-info">
+          <div class="rname">Noodle House</div>
+          <div class="rmeta">⭐ 4.9 · 15–25 min · Free delivery</div>
+          <div class="rtags">Noodles · Chinese · Asian</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <div class="nav-item active">🏠<span>Home</span></div>
+      <div class="nav-item">🔍<span>Search</span></div>
+      <div class="nav-item">🛒<span>Cart</span></div>
+      <div class="nav-item">👤<span>Profile</span></div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: DETAIL -->
+  <div class="screen" id="detail">
+    <div class="detail-img">
+      🍔
+      <button class="back-btn" onclick="goTo('home')">←</button>
+      <button class="fav-btn">🤍</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-top">
+        <h2>Classic Burger</h2>
+        <div class="detail-price">₹199</div>
+      </div>
+      <div class="detail-meta">
+        <div class="meta-chip">⭐ 4.8</div>
+        <div class="meta-chip">🕐 20 min</div>
+        <div class="meta-chip">🔥 450 cal</div>
+      </div>
+      <div class="detail-desc">
+        A juicy double-patty beef burger with fresh lettuce, tomatoes, pickles, and our signature smoky sauce on a toasted brioche bun. Made fresh to order.
+      </div>
+      <div class="qty-row">
+        <label>Quantity</label>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(-1)">−</button>
+          <span class="qty-num" id="qty">1</span>
+          <button class="qty-btn" onclick="changeQty(1)">+</button>
+        </div>
+      </div>
+      <button class="add-cart-btn" onclick="goTo('confirm')">🛒 Add to Cart · ₹<span id="total">199</span></button>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: CONFIRM -->
+  <div class="screen" id="confirm">
+    <div class="confirm-icon">✓</div>
+    <h2>Order Placed!</h2>
+    <p>Your Classic Burger is being prepared.<br>Estimated delivery: 25–30 min</p>
+    <div class="track-card">
+      <div class="track-step">
+        <div class="track-dot done">✓</div>
+        <div class="track-info">
+          <div class="tname">Order Confirmed</div>
+          <div class="ttime">Just now</div>
+        </div>
+      </div>
+      <div class="track-step">
+        <div class="track-dot done">✓</div>
+        <div class="track-info">
+          <div class="tname">Restaurant Preparing</div>
+          <div class="ttime">In progress</div>
+        </div>
+      </div>
+      <div class="track-step">
+        <div class="track-dot pending">→</div>
+        <div class="track-info">
+          <div class="tname">Out for Delivery</div>
+          <div class="ttime">~20 min</div>
+        </div>
+      </div>
+      <div class="track-step">
+        <div class="track-dot pending">📍</div>
+        <div class="track-info">
+          <div class="tname">Delivered</div>
+          <div class="ttime">~30 min</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="goTo('home')" style="width:100%">Back to Home</button>
+  </div>
+
+</div>
+
+<!-- Dots -->
+<div class="nav-dots">
+  <div class="dot active" id="d0"></div>
+  <div class="dot" id="d1"></div>
+  <div class="dot" id="d2"></div>
+  <div class="dot" id="d3"></div>
+  <div class="dot" id="d4"></div>
+</div>
+
+<script>
+  const order = ['splash','login','home','detail','confirm'];
+  let current = 'splash';
+  let qty = 1;
+  const price = 199;
+
+  function goTo(id) {
+    const prev = document.getElementById(current);
+    const next = document.getElementById(id);
+    prev.classList.remove('active');
+    prev.classList.add('exit-left');
+    next.classList.add('active');
+    setTimeout(() => prev.classList.remove('exit-left'), 400);
+    current = id;
+    updateDots();
+  }
+
+  function updateDots() {
+    order.forEach((s, i) => {
+      document.getElementById('d' + i).className = 'dot' + (s === current ? ' active' : '');
+    });
+  }
+
+  function changeQty(delta) {
+    qty = Math.max(1, qty + delta);
+    document.getElementById('qty').textContent = qty;
+    document.getElementById('total').textContent = qty * price;
+  }
+</script>
+</body>
+</html>
